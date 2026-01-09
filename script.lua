@@ -1,5 +1,5 @@
 -- 🔐 إعدادات المفتاح
-local CORRECT_KEY = "kasksbq31kdna98"
+local CORRECT_KEY = "kasksbq31kdna01"
 local DISCORD_LINK = "https://discord.gg/wTuk64E67n"
 
 -- رابط السكربت اللي تبي يشغّل بعد المفتاح صحيح
