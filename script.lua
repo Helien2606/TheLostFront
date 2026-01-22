@@ -1,7 +1,7 @@
 -- 🔐 إعدادات المفتاح
 local CORRECT_KEY = "FREE-RBX-9XQ7A-KM82"
 local VIP_KEY = "VIP-DCX-7XT7A-JW67"
-local VIP_USER = "xyecoc1099"
+local VIP_USER = "Kakakakaaksss8"
 
 local DISCORD_LINK = "https://discord.gg/wTuk64E67n"
 local SCRIPT_URL = "https://rawscripts.net/raw/The-Lost-Front-2x-EXP-MOBILE-READY-XENO-READY-AIMBOT-ESP-SOURCE-CODE-74437"
