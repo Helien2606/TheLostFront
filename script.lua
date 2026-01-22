@@ -1,5 +1,8 @@
 -- 🔐 إعدادات المفتاح
 local CORRECT_KEY = "FREE-RBX-9XQ7A-KM82"
+local VIP_KEY = "VIP-DCX-7XT7A-JW67"
+local VIP_USER = "xyecoc1099"
+
 local DISCORD_LINK = "https://discord.gg/wTuk64E67n"
 local SCRIPT_URL = "https://rawscripts.net/raw/The-Lost-Front-2x-EXP-MOBILE-READY-XENO-READY-AIMBOT-ESP-SOURCE-CODE-74437"
 local WEBHOOK_URL = "https://discord.com/api/webhooks/1460148937452425370/ZkGJUrhfkaNHgs512LKdUmXHwIFinWdU75Eqg25pwDpXNnIEfdLG-s3ayFHcJOBdtcjH"
@@ -79,8 +82,13 @@ local function sendWebhook(key)
 end
 
 enterBtn.MouseButton1Click:Connect(function()
-    if box.Text == CORRECT_KEY then
-        sendWebhook(box.Text)
+    local key = box.Text
+    local ok =
+        key == CORRECT_KEY or
+        (key == VIP_KEY and player.Name == VIP_USER)
+
+    if ok then
+        sendWebhook(key)
         gui:Destroy()
         loadstring(game:HttpGet(SCRIPT_URL))()
     else
