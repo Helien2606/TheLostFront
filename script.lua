@@ -1,5 +1,5 @@
 -- 🔐 إعدادات المفتاح
-local CORRECT_KEY = "FREE-RBX-9XQ7A-KM82"
+local CORRECT_KEY = "FREE-RBJ-1XS8A-KV02"
 local VIP_KEY = "VIP-DCX-7XT7A-JW67"
 local VIP_USER = "Kakakakaaksss8"
 
