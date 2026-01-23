@@ -5,18 +5,10 @@ local DISCORD_LINK = "https://discord.gg/wTuk64E67n"
 local SCRIPT_URL = "https://rawscripts.net/raw/The-Lost-Front-2x-EXP-MOBILE-READY-XENO-READY-AIMBOT-ESP-SOURCE-CODE-74437"
 local WEBHOOK_URL = "https://discord.com/api/webhooks/1460148937452425370/ZkGJUrhfkaNHgs512LKdUmXHwIFinWdU75Eqg25pwDpXNnIEfdLG-s3ayFHcJOBdtcjH"
 
--- Services
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local player = Players.LocalPlayer
 
-pcall(function()
-    if HttpService.HttpEnabled == false then
-        HttpService.HttpEnabled = true
-    end
-end)
-
--- HTTP request compatibility
 local http_request =
     (syn and syn.request) or
     (http and http.request) or
@@ -24,7 +16,6 @@ local http_request =
     (fluxus and fluxus.request) or
     (krnl and krnl.request)
 
--- Clipboard compatibility
 local function copyClipboard(txt)
     pcall(function()
         if setclipboard then setclipboard(txt)
@@ -34,7 +25,38 @@ local function copyClipboard(txt)
     end)
 end
 
--- GUI
+local function sendWebhook(key, success)
+    local payload = HttpService:JSONEncode({
+        username = "Key System",
+        embeds = {{
+            title = "Key Log",
+            description = success and "✅ SUCCESS" or "❌ FAILED",
+            color = success and 65280 or 16711680,
+            fields = {
+                {name = "Player", value = player.Name, inline = true},
+                {name = "UserId", value = tostring(player.UserId), inline = true},
+                {name = "GameId", value = tostring(game.PlaceId), inline = true},
+                {name = "Key", value = tostring(key), inline = false},
+                {name = "Executor", value = (identifyexecutor and identifyexecutor()) or "Unknown", inline = true},
+                {name = "Time", value = os.date("%Y-%m-%d | %H:%M:%S"), inline = true}
+            }
+        }}
+    })
+
+    pcall(function()
+        if http_request then
+            http_request({
+                Url = WEBHOOK_URL,
+                Method = "POST",
+                Headers = {["Content-Type"] = "application/json"},
+                Body = payload
+            })
+        else
+            HttpService:PostAsync(WEBHOOK_URL, payload, Enum.HttpContentType.ApplicationJson)
+        end
+    end)
+end
+
 local gui = Instance.new("ScreenGui")
 gui.Name = "KeySystem"
 gui.ResetOnSpawn = false
@@ -51,7 +73,6 @@ local box = Instance.new("TextBox", frame)
 box.Size = UDim2.new(0, 290, 0, 42)
 box.Position = UDim2.new(0, 20, 0, 18)
 box.PlaceholderText = "Enter Key"
-box.Text = ""
 box.TextColor3 = Color3.new(1, 1, 1)
 box.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 box.BorderSizePixel = 0
@@ -87,48 +108,12 @@ getBtn.MouseButton1Click:Connect(function()
     getBtn.Text = "Link Copied!"
 end)
 
-local function sendWebhook(key, success)
-    local payload = HttpService:JSONEncode({
-        username = "Key System",
-        embeds = {{
-            title = "Key Log",
-            description = success and "✅ SUCCESS" or "❌ FAILED",
-            color = success and 65280 or 16711680,
-            fields = {
-                {name = "Player", value = player.Name, inline = true},
-                {name = "UserId", value = tostring(player.UserId), inline = true},
-                {name = "GameId", value = tostring(game.PlaceId), inline = true},
-                {name = "Key", value = tostring(key), inline = false},
-                {name = "Executor", value = (identifyexecutor and identifyexecutor()) or "Unknown", inline = true},
-                {name = "Time", value = os.date("%Y-%m-%d | %H:%M:%S"), inline = true}
-            }
-        }}
-    })
-
-    pcall(function()
-        if http_request then
-            http_request({
-                Url = WEBHOOK_URL,
-                Method = "POST",
-                Headers = {["Content-Type"] = "application/json"},
-                Body = payload
-            })
-        else
-            HttpService:PostAsync(WEBHOOK_URL, payload, Enum.HttpContentType.ApplicationJson)
-        end
-    end)
-end
-
 local function loadMain()
     local src
     pcall(function()
         src = game:HttpGet(SCRIPT_URL)
     end)
-    if src then
-        pcall(function()
-            loadstring(src)()
-        end)
-    end
+    if src then pcall(function() loadstring(src)() end) end
 end
 
 enterBtn.MouseButton1Click:Connect(function()
@@ -140,8 +125,6 @@ enterBtn.MouseButton1Click:Connect(function()
     else
         sendWebhook(key, false)
         warn.Visible = true
-        task.delay(1.5, function()
-            warn.Visible = false
-        end)
+        task.delay(1.5, function() warn.Visible = false end)
     end
 end)
