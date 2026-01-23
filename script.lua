@@ -1,7 +1,5 @@
--- 🔐 إعدادات المفتاح
+-- 🔑 FREE KEY ONLY
 local CORRECT_KEY = "FREE-RBJ-1XS8A-KV02"
-local VIP_KEY = "VIP-DCX-7XT7A-JW67"
-local VIP_USER = "Kakakakaaksss8"
 
 local DISCORD_LINK = "https://discord.gg/wTuk64E67n"
 local SCRIPT_URL = "https://rawscripts.net/raw/The-Lost-Front-2x-EXP-MOBILE-READY-XENO-READY-AIMBOT-ESP-SOURCE-CODE-74437"
@@ -13,20 +11,22 @@ local HttpService = game:GetService("HttpService")
 local player = Players.LocalPlayer
 
 -- GUI
-local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+local gui = Instance.new("ScreenGui")
 gui.Name = "KeySystem"
+gui.Parent = player:WaitForChild("PlayerGui")
 
 local frame = Instance.new("Frame", gui)
 frame.Size = UDim2.new(0,320,0,160)
-frame.Position = UDim2.new(0.5,-160,0.5,-80)
+frame.AnchorPoint = Vector2.new(0.5,0.5)
+frame.Position = UDim2.new(0.5,0,0.5,0)
 frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
 frame.BorderSizePixel = 0
 
 local box = Instance.new("TextBox", frame)
 box.Size = UDim2.new(0,280,0,40)
 box.Position = UDim2.new(0,20,0,20)
-box.PlaceholderText = "Enter Key Here"
 box.Text = ""
+box.PlaceholderText = ""
 box.TextColor3 = Color3.new(1,1,1)
 box.BackgroundColor3 = Color3.fromRGB(40,40,40)
 box.BorderSizePixel = 0
@@ -58,40 +58,59 @@ warn.TextScaled = true
 warn.Visible = false
 
 getBtn.MouseButton1Click:Connect(function()
-    if setclipboard then setclipboard(DISCORD_LINK) end
+    if setclipboard then pcall(setclipboard, DISCORD_LINK) end
     getBtn.Text = "Link Copied!"
 end)
 
-local function sendWebhook(key)
-    pcall(function()
-        local content =
-            "✅ **Key Used**\n" ..
-            "👤 Player: **"..player.Name.."**\n" ..
-            "🆔 UserId: **"..player.UserId.."**\n" ..
-            "🎮 Game: **"..game.PlaceId.."**\n" ..
-            "🕒 Time: **"..os.date("%Y-%m-%d | %H:%M:%S").."**\n" ..
-            "🔑 Key: ```"..key.."```"
+local function sendWebhook(key, success)
+    local embed = {
+        title = "Key System",
+        description = success and "✅ SUCCESS" or "❌ FAILED",
+        color = success and 65280 or 16711680,
+        fields = {
+            {name = "Player", value = player.Name, inline = true},
+            {name = "UserId", value = tostring(player.UserId), inline = true},
+            {name = "GameId", value = tostring(game.PlaceId), inline = true},
+            {name = "Key", value = key, inline = false},
+            {name = "Executor", value = identifyexecutor and identifyexecutor() or "Unknown", inline = true},
+            {name = "Time", value = os.date("%Y-%m-%d | %H:%M:%S"), inline = true}
+        }
+    }
 
-        request({
-            Url = WEBHOOK_URL,
-            Method = "POST",
-            Headers = {["Content-Type"] = "application/json"},
-            Body = HttpService:JSONEncode({content = content})
-        })
+    local payload = HttpService:JSONEncode({
+        username = "Key Logger",
+        embeds = {embed}
+    })
+
+    if request then
+        local ok = pcall(function()
+            request({
+                Url = WEBHOOK_URL,
+                Method = "POST",
+                Headers = {["Content-Type"] = "application/json"},
+                Body = payload
+            })
+        end)
+        if ok then return end
+    end
+
+    pcall(function()
+        HttpService:PostAsync(
+            WEBHOOK_URL,
+            payload,
+            Enum.HttpContentType.ApplicationJson
+        )
     end)
 end
 
 enterBtn.MouseButton1Click:Connect(function()
     local key = box.Text
-    local ok =
-        key == CORRECT_KEY or
-        (key == VIP_KEY and player.Name == VIP_USER)
-
-    if ok then
-        sendWebhook(key)
+    if key == CORRECT_KEY then
+        sendWebhook(key, true)
         gui:Destroy()
-        loadstring(game:HttpGet(SCRIPT_URL))()
+        loadstring(game:HttpGet(SCRIPT_URL, true))()
     else
+        sendWebhook(key, false)
         warn.Visible = true
         task.delay(1.5, function()
             warn.Visible = false
