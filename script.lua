@@ -3,7 +3,7 @@ local CORRECT_KEY = "FREE-RBJ-1XS8A-KV02"
 
 local DISCORD_LINK = "https://discord.gg/wTuk64E67n"
 local SCRIPT_URL = "https://rawscripts.net/raw/The-Lost-Front-2x-EXP-MOBILE-READY-XENO-READY-AIMBOT-ESP-SOURCE-CODE-74437"
-local WEBHOOK_URL = "https://discord.com/api/webhooks/1460148937452425370/ZkGJUrhfkaNHgs512LKdUmXHwIFinWdU75Eqg25pwDpXNnIEfdLG-s3ayFHcJOBdtcjH"
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1465266472073953444/DFXMMPwAO9NBIE3CcgdSmalRGd9JsV31BGRsKXgi7YITfla3XWdnMsXPOdQMQ6Phh6ex"
 
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
