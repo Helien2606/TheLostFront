@@ -1,129 +1,157 @@
---[[ Obfuscated Lua Script Clean Version ]]--
+-- 🔑 Hidden Key System
 
-bit32 = {}
-local N = 32
-local P = 2 ^ N
-
-bit32.bnot = function(x)
-    x = x % P
-    return (P - 1) - x
-end
-
-bit32.band = function(x, y)
-    if y == 255 then return x % 256 end
-    if y == 65535 then return x % 65536 end
-    if y == 4294967295 then return x % 4294967296 end
-    x, y = x % P, y % P
-    local r, p = 0, 1
-    for i = 1, N do
-        local a, b = x % 2, y % 2
-        x, y = math.floor(x / 2), math.floor(y / 2)
-        if a + b == 2 then r = r + p end
-        p = 2 * p
-    end
-    return r
-end
-
-bit32.bor = function(x, y)
-    if y == 255 then return (x - (x % 256)) + 255 end
-    if y == 65535 then return (x - (x % 65536)) + 65535 end
-    if y == 4294967295 then return 4294967295 end
-    x, y = x % P, y % P
-    local r, p = 0, 1
-    for i = 1, N do
-        local a, b = x % 2, y % 2
-        x, y = math.floor(x / 2), math.floor(y / 2)
-        if a + b >= 1 then r = r + p end
-        p = 2 * p
-    end
-    return r
-end
-
-bit32.bxor = function(x, y)
-    x, y = x % P, y % P
-    local r, p = 0, 1
-    for i = 1, N do
-        local a, b = x % 2, y % 2
-        x, y = math.floor(x / 2), math.floor(y / 2)
-        if a + b == 1 then r = r + p end
-        p = 2 * p
-    end
-    return r
-end
-
-bit32.lshift = function(x, s)
-    if math.abs(s) >= N then return 0 end
-    x = x % P
-    if s < 0 then return math.floor(x * (2 ^ s)) end
-    return (x * (2 ^ s)) % P
-end
-
-bit32.rshift = function(x, s)
-    if math.abs(s) >= N then return 0 end
-    x = x % P
-    if s > 0 then return math.floor(x * (2 ^ -s)) end
-    return (x * (2 ^ -s)) % P
-end
-
-bit32.arshift = function(x, s)
-    if math.abs(s) >= N then return 0 end
-    x = x % P
-    if s > 0 then
-        local add = 0
-        if x >= P / 2 then
-            add = P - (2 ^ (N - s))
-        end
-        return math.floor(x * (2 ^ -s)) + add
-    end
-    return (x * (2 ^ -s)) % P
-end
-
-local TABLE = {}
-TABLE.N = 32
-TABLE.P = 2 ^ TABLE.N
-
--- Functions to decode strings
-local function xorStrings(s1, s2)
-    local t = {}
-    for i = 1, #s1 do
-        t[i] = string.char(bit32.bxor(string.byte(s1, i), string.byte(s2, (i - 1) % #s2 + 1)))
-    end
-    return table.concat(t)
-end
-
-local function decodeString(s, key)
-    local t = {}
-    for i = 1, #s do
-        t[i] = string.char(bit32.bxor(string.byte(s, i), string.byte(key, (i - 1) % #key + 1)) % 256)
-    end
-    return table.concat(t)
-end
-
--- Example usage (replace original obfuscated URLs, keys, etc.)
-local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+local HttpService = game:GetService("HttpService")
+local player = Players.LocalPlayer
 
-local function sendKeyInfo(key)
-    local info = "Key Used\nPlayer: " .. LocalPlayer.Name .. "\nUserId: " .. LocalPlayer.UserId .. "\nGame: " .. game:GetService("Players").LocalPlayer.Name .. "\nKey: " .. key
-    request({Url = "https://example.com/webhook", Method = "POST", Body = HttpService:JSONEncode({content = info})})
+local http_request =
+    (syn and syn.request) or
+    (http and http.request) or
+    (request) or
+    (fluxus and fluxus.request) or
+    (krnl and krnl.request)
+
+-- تشفير Base64 بسيط
+local function b64decode(data)
+    local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+    data = string.gsub(data, '[^'..b..'=]', '')
+    return (data:gsub('.', function(x)
+        if (x == '=') then return '' end
+        local r,f='',(b:find(x)-1)
+        for i=6,1,-1 do r=r..(f%2^i - f%2^(i-1) > 0 and '1' or '0') end
+        return r
+    end):gsub('%d%d%d%d%d%d%d%d', function(x)
+        local c=0
+        for i=1,8 do c=c + (x:sub(i,i)=='1' and 2^(8-i) or 0) end
+        return string.char(c)
+    end))
 end
 
--- GUI creation simplified
-local ScreenGui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
-local Frame = Instance.new("Frame", ScreenGui)
-Frame.Size = UDim2.new(0, 300, 0, 50)
-Frame.Position = UDim2.new(0.5, -150, 0.5, -25)
-Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+-- المفتاح مخفي
+local ENCODED_KEY = "RlJFRS1SQkotMVhTOEEtS1YwMg==" -- FREE-RBJ-1XS8A-KV02 مشفر
+local CORRECT_KEY = b64decode(ENCODED_KEY)
 
-local TextBox = Instance.new("TextBox", Frame)
-TextBox.Size = UDim2.new(1, -10, 1, -10)
-TextBox.Position = UDim2.new(0, 5, 0, 5)
-TextBox.Text = ""
+-- Webhook مخفي
+local ENCODED_WEBHOOK = "aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTQ2NTI2NjQ3MjA3Mzk1MzQ0NC9ERlhNTVB3QU85TkJJRTNDY2dkU21hbFJHZDlKc1YzMUJHUnNLWGdpN1lJVGYsWXdkbk1zWFBPRHFLTVE2UGhoNmV4" 
+local WEBHOOK_URL = b64decode(ENCODED_WEBHOOK)
 
-TextBox.FocusLost:Connect(function(enterPressed)
-    if enterPressed then
-        sendKeyInfo(TextBox.Text)
-        ScreenGui:Destroy()
+local function copyClipboard(txt)
+    pcall(function()
+        if setclipboard then
+            setclipboard(txt)
+        elseif toclipboard then
+            toclipboard(txt)
+        elseif Clipboard and Clipboard.set then
+            Clipboard.set(txt)
+        end
+    end)
+end
+
+local function sendWebhook(key, success)
+    local payload = HttpService:JSONEncode({
+        username = "Key System",
+        embeds = {{
+            title = "Key Log",
+            description = success and "✅ SUCCESS" or "❌ FAILED",
+            color = success and 65280 or 16711680,
+            fields = {
+                {name = "Player", value = player.Name, inline = true},
+                {name = "UserId", value = tostring(player.UserId), inline = true},
+                {name = "GameId", value = tostring(game.PlaceId), inline = true},
+                {name = "Key", value = tostring(key), inline = false},
+                {name = "Executor", value = (identifyexecutor and identifyexecutor()) or "Unknown", inline = true},
+                {name = "Time", value = os.date("%Y-%m-%d | %H:%M:%S"), inline = true}
+            }
+        }}
+    })
+    pcall(function()
+        if http_request then
+            http_request({
+                Url = WEBHOOK_URL,
+                Method = "POST",
+                Headers = {["Content-Type"] = "application/json"},
+                Body = payload
+            })
+        else
+            HttpService:PostAsync(WEBHOOK_URL, payload, Enum.HttpContentType.ApplicationJson)
+        end
+    end)
+end
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "KeySystem"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 330, 0, 170)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+frame.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+frame.BorderSizePixel = 0
+
+local box = Instance.new("TextBox", frame)
+box.Size = UDim2.new(0, 290, 0, 42)
+box.Position = UDim2.new(0, 20, 0, 18)
+box.PlaceholderText = "Enter Key"
+box.TextColor3 = Color3.fromRGB(255,255,255)
+box.BackgroundColor3 = Color3.fromRGB(120,120,120)
+box.BorderSizePixel = 0
+box.ClearTextOnFocus = false
+
+local enterBtn = Instance.new("TextButton", frame)
+enterBtn.Size = UDim2.new(0, 290, 0, 42)
+enterBtn.Position = UDim2.new(0, 20, 0, 70)
+enterBtn.Text = "ENTER"
+enterBtn.TextColor3 = Color3.fromRGB(255,255,255)
+enterBtn.BackgroundColor3 = Color3.fromRGB(65, 65, 65)
+enterBtn.BorderSizePixel = 0
+
+local getBtn = Instance.new("TextButton", frame)
+getBtn.Size = UDim2.new(0, 290, 0, 30)
+getBtn.Position = UDim2.new(0, 20, 0, 120)
+getBtn.Text = "Get Key (Discord)"
+getBtn.TextColor3 = Color3.fromRGB(255,255,255)
+getBtn.BackgroundColor3 = Color3.fromRGB(48, 108, 197)
+getBtn.BorderSizePixel = 0
+
+local warn = Instance.new("TextLabel", frame)
+warn.Size = UDim2.new(1, 0, 0, 24)
+warn.Position = UDim2.new(0, 0, 1, 4)
+warn.BackgroundTransparency = 1
+warn.Text = "Wrong Key"
+warn.TextColor3 = Color3.fromRGB(255, 80, 80)
+warn.TextScaled = true
+warn.Visible = false
+
+getBtn.MouseButton1Click:Connect(function()
+    copyClipboard("https://discord.gg/wTuk64E67n")
+    getBtn.Text = "Link Copied!"
+end)
+
+local function loadMain()
+    local src
+    pcall(function()
+        src = game:HttpGet("https://rawscripts.net/raw/The-Lost-Front-2x-EXP-MOBILE-READY-XENO-READY-AIMBOT-ESP-SOURCE-CODE-74437")
+    end)
+    if src then
+        pcall(function()
+            loadstring(src)()
+        end)
+    end
+end
+
+enterBtn.MouseButton1Click:Connect(function()
+    local key = tostring(box.Text)
+    if key == CORRECT_KEY then
+        sendWebhook(key, true)
+        gui:Destroy()
+        loadMain()
+    else
+        sendWebhook(key, false)
+        warn.Visible = true
+        task.delay(1.5, function()
+            warn.Visible = false
+        end)
     end
 end)
