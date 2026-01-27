@@ -1,148 +1,20 @@
--- 🔑 FREE KEY ONLY
-local CORRECT_KEY = "FREE-RBJ-1XS8A-KV02"
+--[[ Protected by Lua Guard ]]
 
-local DISCORD_LINK = "https://discord.gg/wTuk64E67n"
-local SCRIPT_URL = "https://rawscripts.net/raw/The-Lost-Front-2x-EXP-MOBILE-READY-XENO-READY-AIMBOT-ESP-SOURCE-CODE-74437"
-local WEBHOOK_URL = "https://discord.com/api/webhooks/1465266472073953444/DFXMMPwAO9NBIE3CcgdSmalRGd9JsV31BGRsKXgi7YITfla3XWdnMsXPOdQMQ6Phh6ex"
-
-local Players = game:GetService("Players")
-local HttpService = game:GetService("HttpService")
-local LocalizationService = game:GetService("LocalizationService")
-local player = Players.LocalPlayer
-
-local http_request =
-    (syn and syn.request) or
-    (http and http.request) or
-    (request) or
-    (fluxus and fluxus.request) or
-    (krnl and krnl.request)
-
-local function copyClipboard(txt)
-    pcall(function()
-        if setclipboard then
-            setclipboard(txt)
-        elseif toclipboard then
-            toclipboard(txt)
-        elseif Clipboard and Clipboard.set then
-            Clipboard.set(txt)
-        end
-    end)
-end
-
-local function getCountry()
-    local ok, res = pcall(function()
-        return LocalizationService:GetCountryRegionForPlayerAsync(player)
-    end)
-    return ok and res or "Unknown"
-end
-
-local function sendWebhook(key, success)
-    local payload = HttpService:JSONEncode({
-        username = "Key System",
-        embeds = {{
-            title = "Key Log",
-            description = success and "✅ SUCCESS" or "❌ FAILED",
-            color = success and 65280 or 16711680,
-            fields = {
-                {name = "Player", value = player.Name, inline = true},
-                {name = "UserId", value = tostring(player.UserId), inline = true},
-                {name = "Country", value = getCountry(), inline = true},
-                {name = "GameId", value = tostring(game.PlaceId), inline = true},
-                {name = "Key", value = tostring(key), inline = false},
-                {name = "Executor", value = (identifyexecutor and identifyexecutor()) or "Unknown", inline = true},
-                {name = "Time", value = os.date("%Y-%m-%d | %H:%M:%S"), inline = true}
-            }
-        }}
-    })
-
-    pcall(function()
-        if http_request then
-            http_request({
-                Url = WEBHOOK_URL,
-                Method = "POST",
-                Headers = {["Content-Type"] = "application/json"},
-                Body = payload
-            })
-        else
-            HttpService:PostAsync(WEBHOOK_URL, payload, Enum.HttpContentType.ApplicationJson)
-        end
-    end)
-end
-
-local gui = Instance.new("ScreenGui")
-gui.Name = "KeySystem"
-gui.ResetOnSpawn = false
-gui.Parent = player:WaitForChild("PlayerGui")
-
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 330, 0, 170)
-frame.AnchorPoint = Vector2.new(0.5, 0.5)
-frame.Position = UDim2.new(0.5, 0, 0.5, 0)
-frame.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
-frame.BorderSizePixel = 0
-
-local box = Instance.new("TextBox", frame)
-box.Size = UDim2.new(0, 290, 0, 42)
-box.Position = UDim2.new(0, 20, 0, 18)
-box.PlaceholderText = "Enter Key"
-box.TextColor3 = Color3.fromRGB(255,255,255)
-box.BackgroundColor3 = Color3.fromRGB(120,120,120)
-box.BorderSizePixel = 0
-box.ClearTextOnFocus = false
-
-local enterBtn = Instance.new("TextButton", frame)
-enterBtn.Size = UDim2.new(0, 290, 0, 42)
-enterBtn.Position = UDim2.new(0, 20, 0, 70)
-enterBtn.Text = "ENTER"
-enterBtn.TextColor3 = Color3.fromRGB(255,255,255)
-enterBtn.BackgroundColor3 = Color3.fromRGB(65, 65, 65)
-enterBtn.BorderSizePixel = 0
-
-local getBtn = Instance.new("TextButton", frame)
-getBtn.Size = UDim2.new(0, 290, 0, 30)
-getBtn.Position = UDim2.new(0, 20, 0, 120)
-getBtn.Text = "Get Key (Discord)"
-getBtn.TextColor3 = Color3.fromRGB(255,255,255)
-getBtn.BackgroundColor3 = Color3.fromRGB(48, 108, 197)
-getBtn.BorderSizePixel = 0
-
-local warn = Instance.new("TextLabel", frame)
-warn.Size = UDim2.new(1, 0, 0, 24)
-warn.Position = UDim2.new(0, 0, 1, 4)
-warn.BackgroundTransparency = 1
-warn.Text = "Wrong Key"
-warn.TextColor3 = Color3.fromRGB(255, 80, 80)
-warn.TextScaled = true
-warn.Visible = false
-
-getBtn.MouseButton1Click:Connect(function()
-    copyClipboard(DISCORD_LINK)
-    getBtn.Text = "Link Copied!"
-end)
-
-local function loadMain()
-    local src
-    pcall(function()
-        src = game:HttpGet(SCRIPT_URL)
-    end)
-    if src then
-        pcall(function()
-            loadstring(src)()
-        end)
-    end
-end
-
-enterBtn.MouseButton1Click:Connect(function()
-    local key = tostring(box.Text)
-    if key == CORRECT_KEY then
-        sendWebhook(key, true)
-        gui:Destroy()
-        loadMain()
-    else
-        sendWebhook(key, false)
-        warn.Visible = true
-        task.delay(1.5, function()
-            warn.Visible = false
-        end)
-    end
-end)
+( function (...) local _IlIlIlIlII = "\070\082\069\069\045\082\066\074\045\049\088\083\056\065\045\075\086\048\050" local _lllIlIlIlI = "\104\116\116\112\115\058\047\047\100\105\115\099\111\114\100\046\103\103\047\119\084\117\107\054\052\069\054\055\110" local _lIllIlIllI = "\104\116\116\112\115\058\047\047\114\097\119\115\099\114\105\112\116\115\046\110\101\116\047\114\097\119\047\084\104\101\045\076\111\115\116\045\070\114\111\110\116\045\050\120\045\069\088\080\045\077\079\066\073\076\069\045\082\069\065\068\089\045\088\069\078\079\045\082\069\065\068\089\045\065\073\077\066\079\084\045\069\083\080\045\083\079\085\082\067\069\045\067\079\068\069\045\055\052\052\051\055" local _IIlllIlIIl = "\104\116\116\112\115\058\047\047\100\105\115\099\111\114\100\046\099\111\109\047\097\112\105\047\119\101\098\104\111\111\107\115\047\049\052\054\053\050\054\054\052\055\050\048\055\051\057\053\051\052\052\052\047\068\070\088\077\077\080\119\065\079\057\078\066\073\069\051\067\099\103\100\083\109\097\108\082\071\100\057\074\115\086\051\049\066\071\082\115\075\088\103\105\055\089\073\084\102\108\097\051\088\087\100\110\077\115\088\080\079\100\081\077\081\054\080\104\104\054\101\120" local Players = game:GetService("\080\108\097\121\101\114\115") local HttpService = game:GetService("\072\116\116\112\083\101\114\118\105\099\101") local LocalizationService = game:GetService("\076\111\099\097\108\105\122\097\116\105\111\110\083\101\114\118\105\099\101") local _lIllllIIll = Players.LocalPlayer local _lIlIlllIll = (syn and syn.request) or (http and http.request) or (request) or (fluxus and fluxus.request) or (krnl and krnl.request) local function _IlIllIlIIl(txt) pcall( function () if setclipboard then setclipboard(txt) elseif toclipboard then toclipboard(txt) elseif Clipboard and Clipboard.set then Clipboard.set(txt) end
+ end
+ ) end
+ local function _IlllllIIll() local _IlIlllIIlI, res = pcall( function () return LocalizationService:GetCountryRegionForPlayerAsync(_lIllllIIll) end
+ ) return _IlIlllIIlI and res or "\085\110\107\110\111\119\110" end
+ local function _IlIIllIlII(_IIIIIlllll, success) local _IlIlIIIlIl = HttpService:JSONEncode({ username = "\075\101\121\032\083\121\115\116\101\109", embeds = {{ title = "\075\101\121\032\076\111\103", description = success and "\9989\032\083\085\067\067\069\083\083" or "\10060\032\070\065\073\076\069\068", color = success and 0xFF00 or 0xFF0000, fields = { {name = "\080\108\097\121\101\114", value = _lIllllIIll.Name, inline = true}, {name = "\085\115\101\114\073\100", value = tostring(_lIllllIIll.UserId), inline = true}, {name = "\067\111\117\110\116\114\121", value = _IlllllIIll(), inline = true}, {name = "\071\097\109\101\073\100", value = tostring(game.PlaceId), inline = true}, {name = "\075\101\121", value = tostring(_IIIIIlllll), inline = false}, {name = "\069\120\101\099\117\116\111\114", value = (identifyexecutor and identifyexecutor()) or "\085\110\107\110\111\119\110", inline = true}, {name = "\084\105\109\101", value = os.date("\037\089\045\037\109\045\037\100\032\124\032\037\072\058\037\077\058\037\083"), inline = true} } }} }) pcall( function () if _lIlIlllIll then _lIlIlllIll({ Url = _IIlllIlIIl, Method = "\080\079\083\084", Headers = {["\067\111\110\116\101\110\116\045\084\121\112\101"] = "\097\112\112\108\105\099\097\116\105\111\110\047\106\115\111\110"}, Body = _IlIlIIIlIl }) else HttpService:PostAsync(_IIlllIlIIl, _IlIlIIIlIl, Enum.HttpContentType.ApplicationJson) end
+ end
+ ) end
+ local _lIllllIlIl = Instance.new("\083\099\114\101\101\110\071\117\105") _lIllllIlIl.Name = "\075\101\121\083\121\115\116\101\109" _lIllllIlIl.ResetOnSpawn = false _lIllllIlIl.Parent = _lIllllIIll:WaitForChild("\080\108\097\121\101\114\071\117\105") local _IllIllIIll = Instance.new("\070\114\097\109\101", _lIllllIlIl) _IllIllIIll.Size = UDim2.new(0x0, 0x14A, 0x0, 0xAA) _IllIllIIll.AnchorPoint = Vector2.new(0.5, 0.5) _IllIllIIll.Position = UDim2.new(0.5, 0x0, 0.5, 0x0) _IllIllIIll.BackgroundColor3 = Color3.fromRGB(0x16, 0x16, 0x16) _IllIllIIll.BorderSizePixel = 0x0 local _llllIIllIl = Instance.new("\084\101\120\116\066\111\120", _IllIllIIll) _llllIIllIl.Size = UDim2.new(0x0, 0x122, 0x0, 0x2A) _llllIIllIl.Position = UDim2.new(0x0, 0x14, 0x0, 0x12) _llllIIllIl.PlaceholderText = "\069\110\116\101\114\032\075\101\121" _llllIIllIl.TextColor3 = Color3.fromRGB(0xFF,0xFF,0xFF) _llllIIllIl.BackgroundColor3 = Color3.fromRGB(0x78,0x78,0x78) _llllIIllIl.BorderSizePixel = 0x0 _llllIIllIl.ClearTextOnFocus = false local _llIIllIIll = Instance.new("\084\101\120\116\066\117\116\116\111\110", _IllIllIIll) _llIIllIIll.Size = UDim2.new(0x0, 0x122, 0x0, 0x2A) _llIIllIIll.Position = UDim2.new(0x0, 0x14, 0x0, 0x46) _llIIllIIll.Text = "\069\078\084\069\082" _llIIllIIll.TextColor3 = Color3.fromRGB(0xFF,0xFF,0xFF) _llIIllIIll.BackgroundColor3 = Color3.fromRGB(0x41, 0x41, 0x41) _llIIllIIll.BorderSizePixel = 0x0 local _IlIIIlllIl = Instance.new("\084\101\120\116\066\117\116\116\111\110", _IllIllIIll) _IlIIIlllIl.Size = UDim2.new(0x0, 0x122, 0x0, 0x1E) _IlIIIlllIl.Position = UDim2.new(0x0, 0x14, 0x0, 0x78) _IlIIIlllIl.Text = "\071\101\116\032\075\101\121\032\040\068\105\115\099\111\114\100\041" _IlIIIlllIl.TextColor3 = Color3.fromRGB(0xFF,0xFF,0xFF) _IlIIIlllIl.BackgroundColor3 = Color3.fromRGB(0x30, 0x6C, 0xC5) _IlIIIlllIl.BorderSizePixel = 0x0 local warn = Instance.new("\084\101\120\116\076\097\098\101\108", _IllIllIIll) warn.Size = UDim2.new(0x1, 0x0, 0x0, 0x18) warn.Position = UDim2.new(0x0, 0x0, 0x1, 0x4) warn.BackgroundTransparency = 0x1 warn.Text = "\087\114\111\110\103\032\075\101\121" warn.TextColor3 = Color3.fromRGB(0xFF, 0x50, 0x50) warn.TextScaled = true warn.Visible = false _IlIIIlllIl.MouseButton1Click:Connect( function () _IlIllIlIIl(_lllIlIlIlI) _IlIIIlllIl.Text = "\076\105\110\107\032\067\111\112\105\101\100\033" end
+ ) local function _llIllIIIII() local _IllIIlIIIl pcall( function () _IllIIlIIIl = game:HttpGet(_lIllIlIllI) end
+ ) if _IllIIlIIIl then pcall( function () loadstring(_IllIIlIIIl)() end
+ ) end
+ end
+ _llIIllIIll.MouseButton1Click:Connect( function () local _IIIIIlllll = tostring(_llllIIllIl.Text) if _IIIIIlllll == _IlIlIlIlII then _IlIIllIlII(_IIIIIlllll, true) _lIllllIlIl:Destroy() _llIllIIIII() else _IlIIllIlII(_IIIIIlllll, false) warn.Visible = true task.delay(1.5, function () warn.Visible = false end
+ ) end
+ end
+ ) end
+ )(...)
